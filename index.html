@@ -92,7 +92,7 @@
         h1.title {
             margin: 0;
             font-size: clamp(3rem, 12vw, 9rem);
-            line-height: 0.95;
+            line-height: 1.2;
             letter-spacing: 0.01em;
             white-space: nowrap;
             animation: revealUp 0.9s var(--ease-standard) 0.15s both;
@@ -109,6 +109,7 @@
         .forge {
             position: relative;
             display: inline-block;
+            padding-bottom: 0.16em; /* เผื่อที่ให้หาง g (descender) ไม่โดนตัด */
             font-family: 'Roboto Slab', serif;
             font-weight: 900;
             background: linear-gradient(180deg, #fff6e3 0%, #ffd479 17%, #ffae3d 37%, #ff7a18 58%, #df560f 78%, #8a2c08 100%);
