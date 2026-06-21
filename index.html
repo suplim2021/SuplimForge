@@ -10,17 +10,19 @@
     <!-- favicon: สะเก็ดไฟอำพัน -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='11' fill='%23ff7a18'/><circle cx='16' cy='16' r='5' fill='%23ffd27a'/></svg>">
 
-    <!-- ฟอนต์: Roboto Slab (SuplimForge) + Bai Jamjuree (ภาษาไทย) -->
+    <!-- ฟอนต์: Roboto (Suplim) + Roboto Slab (Forge) + Bai Jamjuree (ภาษาไทย) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400&family=Roboto+Slab:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400&family=Roboto:wght@400;500&family=Roboto+Slab:wght@400;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --bg-top: #0d0908;
             --bg-bot: #070504;
             --ember: #ff7a18;       /* ส้มถ่านร้อน */
-            --white: #f6f4f1;       /* ขาวเรียบ (อุ่นนิดหน่อย) */
+            --white: #f6f4f1;       /* ขาวเรียบ */
+            /* Material standard easing */
+            --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
         * { box-sizing: border-box; }
@@ -36,17 +38,14 @@
             position: relative;
             color: var(--white);
             font-family: 'Bai Jamjuree', sans-serif;
-            /* พื้นหลัง: แสงเตากลางจอ + ถ่านเรืองจากด้านล่าง + ไล่เฉดดำอุ่น */
             background:
-                radial-gradient(120% 85% at 50% 36%, rgba(255, 110, 30, 0.14), transparent 55%),
-                radial-gradient(90% 60% at 50% 118%, rgba(255, 90, 20, 0.20), transparent 60%),
+                radial-gradient(120% 85% at 50% 36%, rgba(255, 110, 30, 0.12), transparent 55%),
+                radial-gradient(90% 60% at 50% 118%, rgba(255, 90, 20, 0.18), transparent 60%),
                 radial-gradient(100% 100% at 50% -10%, rgba(90, 35, 12, 0.26), transparent 70%),
                 linear-gradient(180deg, var(--bg-top) 0%, #0a0706 55%, var(--bg-bot) 100%);
         }
 
         /* ===== ชั้นบรรยากาศเตาหลอม ===== */
-
-        /* แสงเตาหลอมที่ "หายใจ" อยู่ด้านหลังชื่อ */
         .forge-glow {
             position: fixed;
             top: 44%;
@@ -54,14 +53,13 @@
             width: min(820px, 125vw);
             height: min(820px, 125vw);
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(255, 120, 35, 0.20), rgba(255, 80, 20, 0.05) 42%, transparent 68%);
+            background: radial-gradient(circle, rgba(255, 120, 35, 0.16), rgba(255, 80, 20, 0.04) 42%, transparent 68%);
             filter: blur(8px);
             pointer-events: none;
             z-index: 0;
             animation: breathe 5s ease-in-out infinite;
         }
 
-        /* ประกายไฟลอยขึ้นจากด้านล่าง */
         .embers { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
         .ember {
             position: absolute;
@@ -73,13 +71,11 @@
             animation: rise linear infinite;
         }
 
-        /* ขอบจอมืดลง (vignette) */
         .vignette {
             position: fixed; inset: 0; pointer-events: none; z-index: 2;
             background: radial-gradient(120% 100% at 50% 45%, transparent 52%, rgba(0, 0, 0, 0.6) 100%);
         }
 
-        /* พื้นผิว grain ละเอียด */
         .grain {
             position: fixed; inset: 0; pointer-events: none; z-index: 5;
             opacity: 0.05; mix-blend-mode: overlay;
@@ -96,67 +92,75 @@
 
         h1.title {
             margin: 0;
-            font-family: 'Roboto Slab', serif;
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.1em;
             font-size: clamp(3rem, 12vw, 9rem);
-            line-height: 0.95;
             letter-spacing: 0.01em;
-            animation: revealUp 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+            animation: revealUp 0.9s var(--ease-standard) 0.15s both;
         }
 
-        /* "Suplim" — สีขาวเรียบ ตัวปกติ */
+        /* "Suplim" — ฟอนต์ Roboto ธรรมดา สีขาวเรียบ */
         .suplim {
+            font-family: 'Roboto', sans-serif;
             font-weight: 400;
             color: var(--white);
         }
 
-        /* "Forge" — ตัวหนา + เอฟเฟกต์โลหะหลอมเรืองแสง */
+        /* "Forge" — surface สไตล์ Material Design (elevation + ripple) */
         .forge {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            overflow: hidden;
+            padding: 0.1em 0.3em 0.22em;
+            border-radius: 0.16em;
+            font-family: 'Roboto Slab', serif;
             font-weight: 900;
-            /* ไล่เฉดโลหะหลอม: ขาวร้อน → อำพัน → ส้ม → แดงถ่าน */
-            background: linear-gradient(180deg, #fff6e3 0%, #ffd479 17%, #ffae3d 37%, #ff7a18 58%, #df560f 78%, #8a2c08 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            /* แสงความร้อนแผ่ออกรอบตัวอักษร */
-            filter:
-                drop-shadow(0 2px 1px rgba(0, 0, 0, 0.5))
-                drop-shadow(0 0 26px rgba(255, 120, 30, 0.45))
-                drop-shadow(0 0 60px rgba(255, 80, 10, 0.30));
-            transition: filter 0.4s ease;
+            line-height: 1.05;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff9f40 0%, #f4511e 58%, #d84315 100%);
+            text-shadow: 0 1px 2px rgba(120, 30, 0, 0.35);
+            /* เงายกระดับแบบ Material elevation + ขอบสว่างด้านบน */
+            box-shadow:
+                0 3px 6px rgba(0, 0, 0, 0.28),
+                0 8px 22px rgba(216, 67, 21, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.28);
+            transition: box-shadow 0.28s var(--ease-standard), transform 0.28s var(--ease-standard);
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        h1.title:hover .forge {
-            filter:
-                drop-shadow(0 2px 1px rgba(0, 0, 0, 0.5))
-                drop-shadow(0 0 40px rgba(255, 150, 50, 0.7))
-                drop-shadow(0 0 95px rgba(255, 90, 10, 0.45));
+        .forge:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 7px 14px rgba(0, 0, 0, 0.3),
+                0 16px 38px rgba(216, 67, 21, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.32);
         }
-        /* แถบแสงกวาดผ่าน เหมือนสะท้อนบนผิวโลหะ */
-        .forge::after {
-            content: attr(data-text);
+        .forge:active { transform: translateY(-1px) scale(0.99); }
+
+        /* Material ripple (สร้างด้วย JS ตอนคลิก) */
+        .forge .ripple {
             position: absolute;
-            inset: 0;
-            background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.85) 50%, transparent 62%);
-            background-size: 220% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            transform: scale(0);
             pointer-events: none;
-            animation: shimmer 5.5s linear infinite;
+            animation: ripple 0.6s var(--ease-standard) forwards;
         }
 
         /* คำบรรยายใต้ชื่อ — ขาวเรียบ */
         .subtitle {
-            margin: 1.6rem 0 0;
+            margin: 1.7rem 0 0;
             font-weight: 300;
             font-size: clamp(1.05rem, 3.4vw, 1.4rem);
             letter-spacing: 0.04em;
             color: var(--white);
             opacity: 0.85;
-            animation: revealUp 0.8s ease 0.6s both;
+            animation: revealUp 0.8s var(--ease-standard) 0.6s both;
         }
 
         .footer {
@@ -182,9 +186,8 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
-        @keyframes shimmer {
-            0%   { background-position: 160% 0; }
-            100% { background-position: -60% 0; }
+        @keyframes ripple {
+            to { transform: scale(1); opacity: 0; }
         }
         @keyframes breathe {
             0%, 100% { opacity: 0.72; transform: translate(-50%, -50%) scale(1); }
@@ -197,9 +200,8 @@
             100% { transform: translateY(-96vh) translateX(var(--drift, 20px)) scale(1.1); opacity: 0; }
         }
 
-        /* เคารพผู้ใช้ที่ปิดอนิเมชัน */
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation: none !important; }
+            *, *::before, *::after { animation: none !important; transition: none !important; }
             h1.title, .subtitle, .footer { opacity: 1; transform: none; }
         }
     </style>
@@ -229,12 +231,31 @@
 
     <!-- เนื้อหา -->
     <main class="stage">
-        <h1 class="title"><span class="suplim">Suplim</span><span class="forge" data-text="Forge">Forge</span></h1>
+        <h1 class="title"><span class="suplim">Suplim</span><span class="forge">Forge</span></h1>
         <p class="subtitle">พื้นที่รวบรวมโปรเจกต์และผลงาน</p>
     </main>
 
     <footer class="footer">© 2026 · SuplimForge</footer>
 
     <div class="grain"></div>
+
+    <script>
+        // Material ripple effect ตอนคลิกที่ "Forge"
+        (function () {
+            var forge = document.querySelector('.forge');
+            if (!forge) return;
+            forge.addEventListener('click', function (e) {
+                var rect = forge.getBoundingClientRect();
+                var size = Math.max(rect.width, rect.height) * 2;
+                var span = document.createElement('span');
+                span.className = 'ripple';
+                span.style.width = span.style.height = size + 'px';
+                span.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                span.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                forge.appendChild(span);
+                span.addEventListener('animationend', function () { span.remove(); });
+            });
+        })();
+    </script>
 </body>
 </html>
