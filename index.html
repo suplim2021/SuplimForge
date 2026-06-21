@@ -19,9 +19,8 @@
         :root {
             --bg-top: #0d0908;
             --bg-bot: #070504;
-            --ember: #ff7a18;       /* ส้มถ่านร้อน */
-            --white: #f6f4f1;       /* ขาวเรียบ */
-            /* Material standard easing */
+            --ember: #ff7a18;
+            --white: #f6f4f1;
             --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
@@ -39,8 +38,8 @@
             color: var(--white);
             font-family: 'Bai Jamjuree', sans-serif;
             background:
-                radial-gradient(120% 85% at 50% 36%, rgba(255, 110, 30, 0.12), transparent 55%),
-                radial-gradient(90% 60% at 50% 118%, rgba(255, 90, 20, 0.18), transparent 60%),
+                radial-gradient(120% 85% at 50% 36%, rgba(255, 110, 30, 0.14), transparent 55%),
+                radial-gradient(90% 60% at 50% 118%, rgba(255, 90, 20, 0.20), transparent 60%),
                 radial-gradient(100% 100% at 50% -10%, rgba(90, 35, 12, 0.26), transparent 70%),
                 linear-gradient(180deg, var(--bg-top) 0%, #0a0706 55%, var(--bg-bot) 100%);
         }
@@ -53,7 +52,7 @@
             width: min(820px, 125vw);
             height: min(820px, 125vw);
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(255, 120, 35, 0.16), rgba(255, 80, 20, 0.04) 42%, transparent 68%);
+            background: radial-gradient(circle, rgba(255, 120, 35, 0.18), rgba(255, 80, 20, 0.05) 42%, transparent 68%);
             filter: blur(8px);
             pointer-events: none;
             z-index: 0;
@@ -92,13 +91,10 @@
 
         h1.title {
             margin: 0;
-            display: inline-flex;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.1em;
             font-size: clamp(3rem, 12vw, 9rem);
+            line-height: 0.95;
             letter-spacing: 0.01em;
+            white-space: nowrap;
             animation: revealUp 0.9s var(--ease-standard) 0.15s both;
         }
 
@@ -109,47 +105,42 @@
             color: var(--white);
         }
 
-        /* "Forge" — surface สไตล์ Material Design (elevation + ripple) */
+        /* "Forge" — สีอักษรไล่เฉดส้มเตาหลอม + เรืองแสง */
         .forge {
             position: relative;
-            display: inline-flex;
-            align-items: center;
-            overflow: hidden;
-            padding: 0.1em 0.3em 0.22em;
-            border-radius: 0.16em;
+            display: inline-block;
             font-family: 'Roboto Slab', serif;
             font-weight: 900;
-            line-height: 1.05;
-            color: #ffffff;
-            background: linear-gradient(135deg, #ff9f40 0%, #f4511e 58%, #d84315 100%);
-            text-shadow: 0 1px 2px rgba(120, 30, 0, 0.35);
-            /* เงายกระดับแบบ Material elevation + ขอบสว่างด้านบน */
-            box-shadow:
-                0 3px 6px rgba(0, 0, 0, 0.28),
-                0 8px 22px rgba(216, 67, 21, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.28);
-            transition: box-shadow 0.28s var(--ease-standard), transform 0.28s var(--ease-standard);
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            background: linear-gradient(180deg, #fff6e3 0%, #ffd479 17%, #ffae3d 37%, #ff7a18 58%, #df560f 78%, #8a2c08 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter:
+                drop-shadow(0 2px 1px rgba(0, 0, 0, 0.5))
+                drop-shadow(0 0 26px rgba(255, 120, 30, 0.45))
+                drop-shadow(0 0 60px rgba(255, 80, 10, 0.30));
+            transition: filter 0.4s var(--ease-standard);
         }
-        .forge:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 7px 14px rgba(0, 0, 0, 0.3),
-                0 16px 38px rgba(216, 67, 21, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.32);
+        h1.title:hover .forge {
+            filter:
+                drop-shadow(0 2px 1px rgba(0, 0, 0, 0.5))
+                drop-shadow(0 0 40px rgba(255, 150, 50, 0.7))
+                drop-shadow(0 0 95px rgba(255, 90, 10, 0.45));
         }
-        .forge:active { transform: translateY(-1px) scale(0.99); }
-
-        /* Material ripple (สร้างด้วย JS ตอนคลิก) */
-        .forge .ripple {
+        /* แถบแสงกวาดผ่าน เหมือนสะท้อนบนผิวโลหะ */
+        .forge::after {
+            content: attr(data-text);
             position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.45);
-            transform: scale(0);
+            inset: 0;
+            background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.85) 50%, transparent 62%);
+            background-size: 220% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
             pointer-events: none;
-            animation: ripple 0.6s var(--ease-standard) forwards;
+            animation: shimmer 5.5s linear infinite;
         }
 
         /* คำบรรยายใต้ชื่อ — ขาวเรียบ */
@@ -186,8 +177,9 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
-        @keyframes ripple {
-            to { transform: scale(1); opacity: 0; }
+        @keyframes shimmer {
+            0%   { background-position: 160% 0; }
+            100% { background-position: -60% 0; }
         }
         @keyframes breathe {
             0%, 100% { opacity: 0.72; transform: translate(-50%, -50%) scale(1); }
@@ -203,6 +195,10 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { animation: none !important; transition: none !important; }
             h1.title, .subtitle, .footer { opacity: 1; transform: none; }
+        }
+
+        @media (max-width: 360px) {
+            h1.title { white-space: normal; }
         }
     </style>
 </head>
@@ -231,31 +227,12 @@
 
     <!-- เนื้อหา -->
     <main class="stage">
-        <h1 class="title"><span class="suplim">Suplim</span><span class="forge">Forge</span></h1>
+        <h1 class="title"><span class="suplim">Suplim</span><span class="forge" data-text="Forge">Forge</span></h1>
         <p class="subtitle">พื้นที่รวบรวมโปรเจกต์และผลงาน</p>
     </main>
 
     <footer class="footer">© 2026 · SuplimForge</footer>
 
     <div class="grain"></div>
-
-    <script>
-        // Material ripple effect ตอนคลิกที่ "Forge"
-        (function () {
-            var forge = document.querySelector('.forge');
-            if (!forge) return;
-            forge.addEventListener('click', function (e) {
-                var rect = forge.getBoundingClientRect();
-                var size = Math.max(rect.width, rect.height) * 2;
-                var span = document.createElement('span');
-                span.className = 'ripple';
-                span.style.width = span.style.height = size + 'px';
-                span.style.left = (e.clientX - rect.left - size / 2) + 'px';
-                span.style.top = (e.clientY - rect.top - size / 2) + 'px';
-                forge.appendChild(span);
-                span.addEventListener('animationend', function () { span.remove(); });
-            });
-        })();
-    </script>
 </body>
 </html>
