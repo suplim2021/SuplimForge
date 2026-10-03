@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th" data-lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Project sp-arpg devlog — weekly progress of an ARPG in development · บันทึกการพัฒนาเกมรายสัปดาห์">
+    <meta name="theme-color" content="#0b0807">
+    <title>Devlog · SuplimForge</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='11' fill='%23ff7a18'/><circle cx='16' cy='16' r='5' fill='%23ffd27a'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;600&family=Roboto+Slab:wght@400;900&display=swap" rel="stylesheet">
+
+    <script>
+        // Language: ?lang= > saved choice > browser language. Runs before paint.
+        (function () {
+            var lang = new URLSearchParams(location.search).get('lang');
+            if (lang !== 'th' && lang !== 'en') {
+                try { lang = localStorage.getItem('devlog-lang'); } catch (e) { lang = null; }
+            }
+            if (lang !== 'th' && lang !== 'en') {
+                lang = (navigator.language || '').toLowerCase().indexOf('th') === 0 ? 'th' : 'en';
+            }
+            document.documentElement.lang = lang;
+            document.documentElement.dataset.lang = lang;
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg: #0b0807;
+            --card: #15100d;
+            --line: rgba(255, 140, 60, 0.18);
+            --ember: #ff7a18;
+            --gold: #ffd27a;
+            --text: #f1ece6;
+            --muted: rgba(241, 236, 230, 0.62);
+            --ease: cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        * { box-sizing: border-box; }
+        html { background: #070504; }
+        html[data-lang="th"] [lang="en"],
+        html[data-lang="en"] [lang="th"] { display: none !important; }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: 'Bai Jamjuree', sans-serif;
+            font-weight: 300;
+            line-height: 1.75;
+            background:
+                radial-gradient(90% 50% at 50% 0%, rgba(255, 110, 30, 0.13), transparent 60%),
+                linear-gradient(180deg, #0d0908 0, var(--bg) 600px, #070504 100%);
+            min-height: 100vh;
+        }
+        a { color: var(--gold); text-decoration-color: rgba(255, 210, 122, 0.4); text-underline-offset: 3px; }
+        a:hover { color: #fff1d0; }
+
+        .wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+
+        /* ===== top bar ===== */
+        .bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 0;
+            font-size: 0.85rem;
+        }
+        .home { font-family: 'Roboto Slab', serif; text-decoration: none; color: var(--text); letter-spacing: 0.02em; }
+        .home b {
+            font-weight: 900;
+            background: linear-gradient(180deg, #ffd479, #ff7a18 60%, #df560f);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .langs { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+        .langs button {
+            font: inherit; font-weight: 600; letter-spacing: 0.08em;
+            background: none; border: 0; color: var(--muted);
+            padding: 6px 14px; cursor: pointer;
+        }
+        html[data-lang="th"] .langs [data-set="th"],
+        html[data-lang="en"] .langs [data-set="en"] { background: rgba(255, 122, 24, 0.18); color: var(--gold); }
+
+        /* ===== header ===== */
+        header.hero { padding: 40px 0 28px; border-bottom: 1px solid var(--line); }
+        .kicker { font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ember); margin: 0 0 6px; }
+        h1 {
+            margin: 0;
+            font-family: 'Roboto Slab', 'Bai Jamjuree', serif;
+            font-weight: 900;
+            font-size: clamp(2.2rem, 7vw, 3.6rem);
+            line-height: 1.15;
+            filter: drop-shadow(0 0 24px rgba(255, 120, 30, 0.25));
+        }
+        .lede { font-size: 1.1rem; margin: 14px 0 0; max-width: 40em; }
+        .note {
+            margin: 18px 0 0; padding: 10px 14px;
+            font-size: 0.88rem; color: var(--muted);
+            border-left: 3px solid var(--ember);
+            background: rgba(255, 122, 24, 0.06);
+        }
+        .weeks { margin: 20px 0 0; font-size: 0.9rem; color: var(--muted); }
+        .weeks a { margin-right: 10px; }
+
+        /* ===== posts ===== */
+        article { padding: 44px 0 36px; border-bottom: 1px solid var(--line); }
+        .meta { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember); }
+        .meta .live { color: var(--gold); margin-left: 8px; }
+        h2 { font-family: 'Roboto Slab', 'Bai Jamjuree', serif; font-size: clamp(1.5rem, 4.5vw, 2rem); margin: 4px 0 14px; line-height: 1.3; }
+        h3 { font-weight: 600; font-size: 1.05rem; margin: 26px 0 4px; color: var(--gold); }
+        p { margin: 0 0 12px; }
+        ul { margin: 0 0 12px; padding-left: 1.2em; }
+        li { margin: 4px 0; }
+
+        .media { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 18px 0 8px; }
+        .media.one { grid-template-columns: 1fr; max-width: 560px; }
+        figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+        figure img, figure video { display: block; width: 100%; height: auto; background: #000; }
+        figcaption { padding: 8px 12px 10px; font-size: 0.85rem; color: var(--muted); }
+
+        footer { padding: 36px 0 48px; text-align: center; font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(241, 236, 230, 0.4); }
+
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <nav class="bar">
+        <a class="home" href="../">Suplim<b>Forge</b></a>
+        <span class="langs" role="group" aria-label="Language">
+            <button type="button" data-set="th">TH</button>
+            <button type="button" data-set="en">EN</button>
+        </span>
+    </nav>
+
+    <header class="hero">
+        <p class="kicker">Devlog</p>
+        <h1>Project sp-arpg</h1>
+        <p class="lede" lang="th">เกมแอ็กชัน RPG ที่สกิลเปลี่ยนรูปไปตาม<strong>คาถา</strong>ที่คุณประกอบเข้าไปเอง — บันทึกความคืบหน้ารายสัปดาห์</p>
+        <p class="lede" lang="en">An action RPG where every skill visibly changes with the <strong>katha</strong> you socket into it — weekly progress notes.</p>
+        <p class="note" lang="th">ทุกภาพเป็นต้นแบบที่กำลังพัฒนา ชื่อ ตัวเลข โมเดล และงานภาพทั้งหมดยังเป็นของชั่วคราว (placeholder) ชื่อเกมจริงยังไม่ได้ตั้ง</p>
+        <p class="note" lang="en">Everything shown is a work-in-progress prototype. Names, numbers, models and art are placeholders. The game's real name hasn't been chosen yet.</p>
+        <p class="weeks">
+            <a href="#w40">W40</a><a href="#w39">W39</a><a href="#w38">W38</a><a href="#w37">W37</a>
+        </p>
+    </header>
+
+    <!-- ===================== W40 ===================== -->
+    <article id="w40">
+        <div class="meta">2026 · W40 · 29 Sep – 5 Oct<span class="live" lang="th">● สัปดาห์นี้ อัปเดตถึง 3 ต.ค.</span><span class="live" lang="en">● this week, updated to 3 Oct</span></div>
+        <h2 lang="th">เวท ธาตุ และลูกถีบ</h2>
+        <h2 lang="en">Spells, elements and a push kick</h2>
+
+        <h3 lang="th">ถีบ (Teep)</h3>
+        <h3 lang="en">Teep (push kick)</h3>
+        <p lang="th">ท่าถีบที่ใช้ได้กับทุกอาวุธ ไม่ต้องง้าง ถีบศัตรูตัวที่อยู่ข้างหน้ากระเด็นไป 4.5 เมตร ถ้ากระเด็นไปชนศัตรูตัวอื่นหรือชนกำแพงจะโดนแรงขึ้น และชนกำแพงจะมึนไปครู่หนึ่ง ส่วนถ้าถีบบอส คนที่กระเด็นกลับจะเป็นเราเอง</p>
+        <p lang="en">A no-windup kick for any weapon: the nearest enemy in front is shoved 4.5 m back. Kick it into another enemy or a wall for extra damage — a wall stuns it. Kick a boss and you're the one who bounces back.</p>
+        <div class="media">
+            <figure>
+                <video poster="media/2026-10-02-teep-impact-poster.jpg" autoplay muted loop playsinline preload="metadata">
+                    <source src="media/2026-10-02-teep-impact.webm" type="video/webm">
+                    <source src="media/2026-10-02-teep-impact.mp4" type="video/mp4">
+                </video>
+                <figcaption lang="th">ถีบศัตรูไปชนตัวอื่น</figcaption>
+                <figcaption lang="en">Kicking an enemy into another</figcaption>
+            </figure>
+            <figure>
+                <video poster="media/2026-10-02-teep-poster.jpg" autoplay muted loop playsinline preload="metadata">
+                    <source src="media/2026-10-02-teep.webm" type="video/webm">
+                    <source src="media/2026-10-02-teep.mp4" type="video/mp4">
+                </video>
+                <figcaption lang="th">ถีบแล้วได้ Tempo 1 แต้ม</figcaption>
+                <figcaption lang="en">A landed kick gives 1 Tempo</figcaption>
+            </figure>
+        </div>
+
+        <h3 lang="th">เวทแปดบท ใช้ได้กับทุกอาวุธ</h3>
+        <h3 lang="en">Eight spells, usable with any weapon</h3>
+        <p lang="th">Starfall (เศษดาวพุ่งเป็นรูปพัด), Asani (ฟ้าผ่าลงจุดที่เล็ง), Naga Coil (ขดนาคที่ตามตัวและทำให้ศัตรูช้าลง), Nagapasha (บ่วงนาครัดใครก็ตามที่เดินผ่าน), Chakra (จักรที่โคจรรอบตัวแล้วพุ่งใส่ศัตรู), Unbinding Wave (ลบพลังพิเศษของมอนสเตอร์), Astra Blade (อาวุธดึงพลังเวทมาใช้) และ Deva Lamp (ดวงไฟที่คืนมานาและเร่งความเร็ว)</p>
+        <p lang="en">Starfall (a fan of star shards), Asani (lightning where you aim), Naga Coil (a slowing coil that follows you), Nagapasha (a serpent noose for whoever crosses it), Chakra (orbiting discs that fly at enemies), Unbinding Wave (switches monster mods off), Astra Blade (your weapon draws on Spell Power) and Deva Lamp (a light that restores mana and speeds you up).</p>
+
+        <h3 lang="th">สี่ธาตุ</h3>
+        <h3 lang="en">Four elements</h3>
+        <p lang="th">Agni เผา · Varuna ทำให้เย็นจนช้า · Prithvi ตรึงอยู่กับที่และตีแรงขึ้น · Vayu เร่งความเร็วและผลักออก สกิลละหนึ่งธาตุ ใช้ได้ทั้งกระสุน การฟัน และ Barrier</p>
+        <p lang="en">Agni burns · Varuna chills · Prithvi roots and hits harder · Vayu speeds up and pushes. One per skill — on shots, strikes and Barriers.</p>
+        <div class="media">
+            <figure>
+                <img src="media/2026-09-30-spells.png" alt="" loading="lazy">
+                <figcaption lang="th">เวทชุดแรก: Starfall, Asani, Naga Coil, Nagapasha</figcaption>
+                <figcaption lang="en">The first four spells</figcaption>
+            </figure>
+            <figure>
+                <img src="media/2026-09-30-elements.png" alt="" loading="lazy">
+                <figcaption lang="th">สี่ธาตุบนสกิลต่างชนิดกัน</figcaption>
+                <figcaption lang="en">The four elements on different skills</figcaption>
+            </figure>
+        </div>
+
+        <h3 lang="th">สิงห์ วิญญาณสิงโตคู่กาย</h3>
+        <h3 lang="en">Singha, a spirit lion</h3>
+        <p lang="th">เรียกสิงโตวิญญาณมาสู้ข้างตัวจนกว่าจะถูกฆ่า มันกัดด้วยคาถาของเรา (ใส่ Agni ก็ไฟลุก) มอนสเตอร์ยิงมันได้ และใส่ Manifold จะได้สองตัว</p>
+        <p lang="en">A spirit lion fights beside you until it's killed. It bites with your katha (Agni sets enemies burning), monsters can shoot it, and Manifold calls two.</p>
+        <div class="media one">
+            <figure>
+                <img src="media/2026-09-30-singha.png" alt="" loading="lazy">
+                <figcaption lang="th">สิงห์ (สีเหลือง) กลางฝูงมอนสเตอร์</figcaption>
+                <figcaption lang="en">Singha (yellow) in a pack</figcaption>
+            </figure>
+        </div>
+
+        <h3 lang="th">อื่น ๆ สัปดาห์นี้</h3>
+        <h3 lang="en">Also this week</h3>
+        <ul lang="th">
+            <li>ใส่คาถาได้ 5 ช่องต่อสกิล (จากเดิม 3) และมีคาถาใหม่อีก 15 แบบ เช่น กระสุนที่กระโดดต่อ แตกตัว เด้งกลับ หรือติดแล้วระเบิด</li>
+            <li>คาถา trigger แต่ละตัวเลือกเวทของตัวเองได้ เช่น "ฆ่าศัตรูแล้วร่าย Asani"</li>
+            <li>สกิลเคลื่อนที่: Roll, Three-Step, Leap และ Spellstep (เคลื่อนที่ครบ N ครั้งแล้วร่ายเวทลงจุดที่ลงพื้น)</li>
+            <li>ผังยันต์ได้ notable ใหม่ 24 จุด และ keystone 4 จุดที่ได้อย่างต้องเสียอย่าง</li>
+            <li>เล่นด้วยจอยได้แล้ว (เฉพาะตอนต่อสู้) พร้อมระบบช่วยเล็ง</li>
+        </ul>
+        <ul lang="en">
+            <li>Five katha sockets per skill (was three), and 15 new katha — shots that jump, split, come back, or stick and blow up.</li>
+            <li>Each trigger katha picks its own spell, e.g. "on kill, cast Asani".</li>
+            <li>Movement skills: Roll, Three-Step, Leap, and Spellstep (every N moves, your chosen spell lands where you do).</li>
+            <li>The yantra tree gains 24 notables and 4 keystones with real trade-offs.</li>
+            <li>Gamepad support for combat, with aim assist.</li>
+        </ul>
+        <div class="media">
+            <figure>
+                <img src="media/2026-10-01-yantra-keystones.png" alt="" loading="lazy">
+                <figcaption lang="th">keystone ที่ปลายสะพานของผังยันต์</figcaption>
+                <figcaption lang="en">Keystones at the ends of the yantra bridges</figcaption>
+            </figure>
+            <figure>
+                <img src="media/2026-10-03-gamepad-aim.png" alt="" loading="lazy">
+                <figcaption lang="th">ช่วยเล็งบนจอย: ลูกศรที่เท้า วงแหวนที่เป้า</figcaption>
+                <figcaption lang="en">Pad aim assist: arrow at your feet, ring on the target</figcaption>
+            </figure>
+        </div>
+    </article>
+
+    <!-- ===================== W39 ===================== -->
+    <article id="w39">
+        <div class="meta">2026 · W39 · 22 – 28 Sep</div>
+        <h2 lang="th">อาวุธ มอนสเตอร์ และผังยันต์</h2>
+        <h2 lang="en">Weapons, monsters and the yantra</h2>
+
+        <h3 lang="th">ผังยันต์ (passive tree)</h3>
+        <h3 lang="en">The yantra (passive tree)</h3>
+        <p lang="th">ผัง passive 148 จุด จัดวางตามยันต์ไทย มีตราตรงกลาง ยันต์เสือ หนุมาน สาริกา และยันต์เกราะเพชร เชื่อมกันด้วยสะพาน ยันต์ในเกมเป็นสิ่งที่<em>อัญเชิญ</em> ไม่ใช่รอยสัก เลยรีเซ็ตแล้วเลือกเส้นทางใหม่ได้ตลอด</p>
+        <p lang="en">A 148-node passive tree laid out like Thai yantras — a central seal with tiger, Hanuman, Sarika and diamond-armour yantras joined by bridges. A yantra here is <em>invoked</em>, not tattooed, so you can re-invoke a different path whenever you like.</p>
+        <div class="media">
+            <figure>
+                <img src="media/2026-09-26-yantra-tree.png" alt="" loading="lazy">
+                <figcaption lang="th">ภาพรวมผังยันต์</figcaption>
+                <figcaption lang="en">The whole tree</figcaption>
+            </figure>
+            <figure>
+                <img src="media/2026-09-26-diamond-armour-yantra.png" alt="" loading="lazy">
+                <figcaption lang="th">ยันต์เกราะเพชร วาดตามแบบยันต์ผ้าจริง</figcaption>
+                <figcaption lang="en">Diamond-armour yantra, drawn like the real cloth yantra</figcaption>
+            </figure>
+        </div>
+
+        <h3 lang="th">ประเภทอาวุธและสกิลอาวุธ</h3>
+        <h3 lang="en">Weapon types and weapon skills</h3>
+        <p lang="th">มีอาวุธสี่ประเภท ได้แก่ ดาบ ทวน ธนู และไม้เท้า บวกช่องมือรองสำหรับโล่ มีดหมอ หรือดาบเล่มที่สอง อาวุธแต่ละประเภทมีสกิลของตัวเอง รวม 17 ท่า เช่น Crossed Daab (ดาบคู่ฟันเป็นกากบาท), Ngao Sweep (ง้าวกวาดครึ่งวง) และ Tracking Arrow (ลูกศรเลี้ยวหาศัตรู) มีแถบ <strong>Tempo</strong> ที่บางท่าเติมและบางท่าใช้ และมีท่า Parry and Riposte ที่ปัดแล้วสวนกลับได้โดยไม่ต้องจับจังหวะ</p>
+        <p lang="en">Four weapon types — sword, polearm, bow, staff — plus an off-hand slot (shield, mid mo, or a second sword). Each has its own skills, 17 in all: Crossed Daab (an X-cut with two swords), Ngao Sweep (a wide polearm arc), Tracking Arrow (curves to the nearest enemy) and more. A <strong>Tempo</strong> meter is filled by some skills and spent by others, and Parry and Riposte guards and counter-cuts with no timing needed.</p>
+        <div class="media">
+            <figure>
+                <img src="media/2026-09-28-parry-riposte.png" alt="" loading="lazy">
+                <figcaption lang="th">Parry and Riposte</figcaption>
+                <figcaption lang="en">Parry and Riposte</figcaption>
+            </figure>
+            <figure>
+                <img src="media/2026-09-28-weapon-skills-1b.png" alt="" loading="lazy">
+                <figcaption lang="th">Ngao Sweep, Hook and Drag, Shield Bash, Whirling Daab</figcaption>
+                <figcaption lang="en">Ngao Sweep, Hook and Drag, Shield Bash, Whirling Daab</figcaption>
+            </figure>
+        </div>
+
+        <h3 lang="th">อื่น ๆ สัปดาห์นี้</h3>
+        <h3 lang="en">Also this week</h3>
+        <ul lang="th">
+            <li>มอนสเตอร์มีเลเวล และมีระดับ Enchanted / Charmed ที่ HP เยอะกว่าและมีพลังพิเศษ เช่น Frenzied, Volley, Death Burst</li>
+            <li>แยก Attack Power กับ Spell Power: อาวุธเสริมท่าโจมตี ส่วนไม้เท้ากับยันต์เสริมเวท</li>
+            <li>คริติคอล ความเร็วโจมตี/ร่าย การป้องกันแยก Attack / Spell</li>
+            <li>อุปกรณ์ 5 ช่อง ของดรอป กระเป๋า และเซฟแยกตามตัวละคร</li>
+            <li>มุมกล้องใหม่ที่ชันขึ้นและไกลขึ้น มองรอบตัวได้กว้างขึ้น</li>
+        </ul>
+        <ul lang="en">
+            <li>Monster levels, plus Enchanted / Charmed tiers with more HP and dangerous mods like Frenzied, Volley and Death Burst.</li>
+            <li>Attack Power and Spell Power split: weapons power attacks; staves and the yantra power spells.</li>
+            <li>Critical hits, attack/cast speed, separate Attack / Spell Defence.</li>
+            <li>Five equipment slots, loot, a bag, and one save per character.</li>
+            <li>A steeper, further camera so you can see more around you.</li>
+        </ul>
+    </article>
+
+    <!-- ===================== W38 ===================== -->
+    <article id="w38">
+        <div class="meta">2026 · W38 · 15 – 21 Sep</div>
+        <h2 lang="th">การต่อสู้ครั้งแรก</h2>
+        <h2 lang="en">The first fight</h2>
+        <p lang="th">จากกล่องทดลองมาเป็นสนามที่เล่นได้จริง: เดินด้วย WASD เล็งด้วยเมาส์ มีศัตรูที่วิ่งไล่และยิงกลับ มีมานา เลเวล และ XP สกิลแรกมีสี่ตัว ได้แก่ Bolt, Nova, Slam และ Ward</p>
+        <p lang="en">From test boxes to something playable: WASD to move, mouse to aim, enemies that chase and shoot back, mana, levels and XP. Four first skills: Bolt, Nova, Slam and Ward.</p>
+        <p lang="th">หัวใจของเกมเริ่มเห็นตั้งแต่ตรงนี้ คาถาตัวเดียวกันให้ผลต่างกันในแต่ละสกิล อย่าง Split บน Bolt จะยิงกระสุนเพิ่ม บน Slam จะกระแทกเป็นหลายจังหวะ และบน Ward จะได้โล่หลายชั้น ใส่คาถาสองตัวพร้อมกันก็ต้องเห็นผลของทั้งสองตัว</p>
+        <p lang="en">The core idea showed up right away: one katha means something different on each skill. Split gives Bolt more projectiles, Slam more pulses, and Ward more shield charges — and two katha together must visibly do both.</p>
+        <p lang="th">ปลายสัปดาห์มีฉากทุ่งหญ้าแรก มีต้นไม้ ดอกไม้ และทางเดิน และศัตรูเริ่มเดินอ้อมกันเองได้</p>
+        <p lang="en">The week ended with the first meadow scene — trees, flowers, a path — and enemies that path-find around each other.</p>
+    </article>
+
+    <!-- ===================== W37 ===================== -->
+    <article id="w37">
+        <div class="meta">2026 · W37 · 8 – 14 Sep</div>
+        <h2 lang="th">ก่อนจะมีเกมให้เล่น</h2>
+        <h2 lang="en">Before there was a game</h2>
+        <p lang="th">สัปดาห์แรกยังไม่มีตัวละครหรือสกิลเลย เป็นสัปดาห์ของการวางโครง: ตัดสินใจเริ่มด้วย Godot ทำแล็บเล็ก ๆ เป็นกล่องที่เดินได้กับ marker ที่หายไปเอง แล้ว export เป็นไฟล์ Windows ที่เปิดเล่นได้จริง เพื่อให้แน่ใจว่าวงจร แก้ → เปิดดู → export ใช้งานได้ ก่อนจะเริ่มทำเกมจริง</p>
+        <p lang="en">No characters or skills yet — this was groundwork. We picked Godot, built a tiny lab (a moving box and markers that expire), and exported a Windows build that actually runs, to prove the edit → look → export loop before building the real thing.</p>
+    </article>
+
+    <footer>© 2026 · SuplimForge</footer>
+</div>
+
+<script>
+    document.querySelectorAll('.langs button').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var lang = b.dataset.set;
+            document.documentElement.lang = lang;
+            document.documentElement.dataset.lang = lang;
+            try { localStorage.setItem('devlog-lang', lang); } catch (e) {}
+        });
+    });
+</script>
+</body>
+</html>

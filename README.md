@@ -11,6 +11,8 @@
 ## 📁 โครงสร้าง
 
 - `index.html` — ทั้งหน้าอยู่ในไฟล์เดียว (HTML + CSS ล้วน ไม่ต้อง build, ไม่มี dependency)
+- `devlog/index.html` — Devlog ของ Project sp-arpg สรุปรายสัปดาห์ สลับไทย/อังกฤษได้ (ปุ่ม TH/EN, จำค่าไว้, ลิงก์ `?lang=en` ได้)
+- `devlog/media/` — ภาพและวิดีโอสั้น (WebM + MP4) คัดมาจาก `media/updates/` ของ repo เกม
 
 ## 🛠 พัฒนาต่อ
 
