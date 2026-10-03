@@ -1,0 +1,4 @@
+# GitHub Pages: keep working notes off the public site.
+exclude:
+  - AGENTS.md
+  - README.md
